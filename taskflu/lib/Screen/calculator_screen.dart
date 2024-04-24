@@ -1,42 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:taskflu/model/calculator_model.dart';
+// import 'model.dart';
 
 void main() {
-  runApp(ArithmeticCalculator());
+  runApp(CalculatorScreen());
 }
 
-class ArithmeticCalculator extends StatefulWidget {
+class CalculatorScreen extends StatefulWidget {
   @override
-  _ArithmeticCalculatorState createState() => _ArithmeticCalculatorState();
+  _CalculatorScreenState createState() => _CalculatorScreenState();
 }
 
-class _ArithmeticCalculatorState extends State<ArithmeticCalculator> {
-  double firstNumber = 0.0;
-  double secondNumber = 0.0;
-  double result = 0.0;
-  String operation = '';
+class _CalculatorScreenState extends State<CalculatorScreen> {
+  final CalculatorModel model = CalculatorModel();
 
   TextEditingController firstNumberController = TextEditingController();
   TextEditingController secondNumberController = TextEditingController();
 
   void calculateResult() {
     setState(() {
-      firstNumber = double.parse(firstNumberController.text);
-      secondNumber = double.parse(secondNumberController.text);
-
-      switch (operation) {
-        case 'Add':
-          result = firstNumber + secondNumber;
-          break;
-        case 'Subtract':
-          result = firstNumber - secondNumber;
-          break;
-        case 'Multiply':
-          result = firstNumber * secondNumber;
-          break;
-        case 'Divide':
-          result = firstNumber / secondNumber;
-          break;
-      }
+      model.firstNumber = double.parse(firstNumberController.text);
+      model.secondNumber = double.parse(secondNumberController.text);
+      model.calculateResult();
     });
   }
 
@@ -45,7 +30,10 @@ class _ArithmeticCalculatorState extends State<ArithmeticCalculator> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Arithmetic'),
+          title: Text('Simple Calculator'),
+          backgroundColor: Colors.blue,
+          centerTitle: true,
+          elevation: 0,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -65,50 +53,69 @@ class _ArithmeticCalculatorState extends State<ArithmeticCalculator> {
                 ),
                 keyboardType: TextInputType.number,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        operation = 'Add';
-                      });
-                      calculateResult();
-                    },
-                    child: Text('Add'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        operation = 'Subtract';
-                      });
-                      calculateResult();
-                    },
-                    child: Text('Subtract'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        operation = 'Multiply';
-                      });
-                      calculateResult();
-                    },
-                    child: Text('Multiply'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        operation = 'Divide';
-                      });
-                      calculateResult();
-                    },
-                    child: Text('Divide'),
-                  ),
-                ],
+              Align(
+                alignment: Alignment.topLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      leading: Radio(
+                        value: 'Add',
+                        groupValue: model.operation,
+                        onChanged: (value) {
+                          setState(() {
+                            model.operation = value.toString();
+                          });
+                        },
+                      ),
+                      title: Text('Add'),
+                    ),
+                    ListTile(
+                      leading: Radio(
+                        value: 'Subtract',
+                        groupValue: model.operation,
+                        onChanged: (value) {
+                          setState(() {
+                            model.operation = value.toString();
+                          });
+                        },
+                      ),
+                      title: Text('Subtract'),
+                    ),
+                    ListTile(
+                      leading: Radio(
+                        value: 'Multiply',
+                        groupValue: model.operation,
+                        onChanged: (value) {
+                          setState(() {
+                            model.operation = value.toString();
+                          });
+                        },
+                      ),
+                      title: Text('Multiply'),
+                    ),
+                    ListTile(
+                      leading: Radio(
+                        value: 'Divide',
+                        groupValue: model.operation,
+                        onChanged: (value) {
+                          setState(() {
+                            model.operation = value.toString();
+                          });
+                        },
+                      ),
+                      title: Text('Divide'),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: calculateResult,
+                child: Text('Calculate'),
               ),
               SizedBox(height: 16.0),
               Text(
-                'Result: $result',
+                'Result: ${model.result}',
                 style: TextStyle(fontSize: 24.0),
               ),
             ],
